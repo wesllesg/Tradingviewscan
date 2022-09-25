@@ -3,29 +3,44 @@ const https = require('https');
 const express = require('express');
 const app = express();
 
-
+app.get('/', function(req, response) {
+  var tickers = req.query.tickers;
+  //console.log("tickers=" + tickers);
+  const arrtickers = tickers.split(',');
+  console.log(arrtickers);
+  
 const query = {
-  /*"symbols": {
-    "tickers": [],
+  "symbols": {
+    "tickers": arrtickers,
+    /*"tickers": [
+      'BMFBOVESPA:BBAS3'
+      //'POMO4.SAO'
+    ],*/
     "query": {
       "types": []
     }
-  },*/
+  },
   "columns": [
-    "description",
-    "name"
-  ],
-  "sort": {
+    'name',
+    'change',
+    'open',
+    'high',
+    'low',    
+    'close',
+    'volume',
+    'description'
+      ],
+  /*"sort": {
     "sortBy": "name", 
     "sortOrder": "asc"
-  },
+  },*/
   /*"range": [
     0, 20000
   ]*/
 }
 
-app.get('/', function(req, response) {
 
+  
   const res = axios.create({
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     httpsAgent: new https.Agent({ rejectUnauthorized: false })
@@ -38,7 +53,11 @@ app.get('/', function(req, response) {
 
       var text = "";
       for (var i = 0; i < arrayResponse.length; i++) {
-        text += '\n'+res.data.data[i].d;
+        if (i == 0){
+          text += res.data.data[i].d;  
+        }else{
+          text += '\n'+res.data.data[i].d; 
+        }
         //console.log(res.data.data[i].d);
       }
       console.log(text);
